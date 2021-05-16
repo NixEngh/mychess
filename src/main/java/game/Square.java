@@ -3,16 +3,14 @@ package game;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 
-import java.awt.event.MouseEvent;
-
 public class Square extends Label {
     private int x, y;
-    private GameBoard board;
+    private ChessBoard board;
     private static final String blackColor = "-fx-background-color: #a79a8a;";
     private static final String whiteColor = "-fx-background-color: white;";
     private static final String redColor = "-fx-background-color: red;";
     private String originalColor;
-    Square(GameBoard board, int x, int y) {
+    Square(ChessBoard board, int x, int y) {
         this.board = board;
         this.x = x;
         this.y = y;

@@ -14,7 +14,7 @@ public class Chess extends Application {
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Chess");
         BorderPane pane = new BorderPane();
-        GridPane board = new GameBoard(8, 8);
+        GridPane board = new ChessBoard(8, 8);
         board.setAlignment(Pos.CENTER);
         pane.setCenter(board);
 
