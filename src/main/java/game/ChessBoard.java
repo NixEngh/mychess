@@ -69,19 +69,22 @@ public class ChessBoard extends Grid<Piece> {
 //                selectedPiece = get(location);
                 possibleLocs = get(location).getPossibleMoves();
             }
+        } else {
+            possibleLocs = Collections.emptySet();
         }
         rePaintBoard(location);
     }
     public void handleMouseClicked(Location location) {
         Piece piece = get(location);
         if(hasSelectedPiece()) {
-            if(piece == null) {
+            if(piece == selectedPiece) {
+                clearSelectedPiece();
+            } else if(piece == null) {
                 makeMove(location);
-            } else {
-                if(piece.getColor() == currentColor) {
-                    selectPiece(piece);
-                }
+            } else if(piece.getColor() == currentColor) {
+                selectPiece(piece);
             }
+
         } else {
             if (piece != null) {
                 if(piece.getColor() == currentColor){
@@ -136,12 +139,13 @@ public class ChessBoard extends Grid<Piece> {
     }
     public void clearSelectedPiece() {
         selectedPiece = null;
+        underAttack = Collections.emptySet();
     }
 
     public void selectPiece(Piece piece) {
         selectedPiece = piece;
         underAttack = possibleLocs;
-
+        rePaintBoard(piece.getLocation());
 
     }
 
