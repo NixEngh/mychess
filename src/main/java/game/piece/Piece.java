@@ -4,12 +4,12 @@ import game.ChessBoard;
 import grid.Location;
 
 public abstract class Piece implements IPiece{
-    private String color;
+    private PieceColor color;
     private ChessBoard board;
     private final Location startLocation;
     private Location currentLocation;
 
-    public Piece(ChessBoard board, Location startLocation, String color) {
+    public Piece(ChessBoard board, Location startLocation, PieceColor color) {
         this.board = board;
         this.startLocation = startLocation;
         this.currentLocation = startLocation;
@@ -30,5 +30,14 @@ public abstract class Piece implements IPiece{
     }
 
     @Override
-    public String getColor() { return color; }
+    public PieceColor getColor() { return color; }
+
+    /**
+     * This is when I realized that planning is a good idea.
+     * This method creates a copy of the piece, so that when copying a ChessBoard, the original instances of IPiece are left untouched
+     * @param board
+     * @return The copy
+     */
+    public abstract Piece copyForBoard(ChessBoard board);
+
 }

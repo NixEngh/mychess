@@ -2,8 +2,10 @@ package game.piece;
 
 import game.ChessBoard;
 import grid.Location;
+import javafx.scene.image.Image;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * Interface for chessPieces to be used in this chess version
@@ -13,7 +15,7 @@ public interface IPiece {
      * Method to get all valid moves in a List, EmptyList if none.
      * @return
      */
-    public List<Location> getPossibleMoves();
+    public Set<Location> getPossibleMoves();
 
     /**
      * Get symbol representation of the piece
@@ -25,7 +27,7 @@ public interface IPiece {
      * Get the pieces color
      * @return
      */
-    public String getColor();
+    public PieceColor getColor();
 
     /**
      * returns the current location of a piece
@@ -33,11 +35,6 @@ public interface IPiece {
      */
     public Location getLocation();
 
-    /**
-     * This is when I realized that planning is a good idea.
-     * This method creates a copy of the piece, so that when copying a ChessBoard, the original instances of IPiece are left untouched
-     * @param board
-     * @return The copy
-     */
-    public IPiece copyForBoard(ChessBoard board);
+
+    public Image getImage ();
 }

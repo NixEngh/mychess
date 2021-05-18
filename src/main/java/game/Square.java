@@ -1,33 +1,52 @@
 package game;
 
+import grid.Location;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 
 public class Square extends Label {
-    private int x, y;
+    private Location location;
     private ChessBoard board;
-    private static final String blackColor = "-fx-background-color: #a79a8a;";
-    private static final String whiteColor = "-fx-background-color: white;";
-    private static final String redColor = "-fx-background-color: red;";
-    private String originalColor;
-    Square(ChessBoard board, int x, int y) {
+    private static final int SIZE = 100;
+    private SquareColor originalColor;
+
+
+    Square(ChessBoard board, Location location) {
         this.board = board;
-        this.x = x;
-        this.y = y;
+        this.location = location;
         setAlignment(Pos.CENTER);
-        originalColor = (x+y)%2==0 ? whiteColor : blackColor;
-        setStyle(originalColor);
+        originalColor = (location.col+location.row)%2==0 ? SquareColor.whiteColor : SquareColor.blackColor;
+        setStyle(originalColor.getColorCode());
 
-        setMinSize(50, 50);
-        setMaxSize(50, 50);
+        setMinSize(getSIZE(), getSIZE());
+        setMaxSize(getSIZE(), getSIZE());
 
+        setOnMouseClicked(e -> onMouseClicked());
         setOnMouseEntered(e -> onMouseEntered());
         setOnMouseExited(e -> onMouseExited());
     }
+
+    public void setBackGroundColor (SquareColor color) {
+        setStyle(color.getColorCode());
+    }
+    public SquareColor getOriginalColor() {
+        return originalColor;
+    }
+
     private void onMouseEntered() {
-        setStyle(redColor);
+        board.processHover(location);
+    }
+    private void onMouseClicked() {
+
     }
     private void onMouseExited() {
-        setStyle(originalColor);
+    }
+
+    public static int getSIZE() {
+        return SIZE;
+    }
+
+    public Location getLocation() {
+        return location;
     }
 }

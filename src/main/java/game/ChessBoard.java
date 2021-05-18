@@ -1,23 +1,102 @@
 package game;
 
 import game.piece.IPiece;
+import game.piece.Pawn;
+import game.piece.Piece;
+import game.piece.PieceColor;
 import grid.Grid;
 import grid.Location;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
-public class ChessBoard extends Grid<IPiece> {
+import java.util.*;
 
-    private String currentColor = "white";
+public class ChessBoard extends Grid<Piece> {
+
+    private PieceColor currentColor = PieceColor.LIGHT;
+    private Map<Location, Square> locationSquareMap = new HashMap<>();
+    private Set<Location> underAttack = new HashSet<>();
+    private Piece selectedPiece;
 
     public ChessBoard(int rows, int columns) {
         super(rows, columns);
-        locations().forEach(loc -> add(new Square(this, loc.col, loc.row), loc.col, loc.row));
+
+        for (Location loc : locations()) {
+            Square square = new Square(this, loc);
+            add(square, loc.col, loc.row);
+            locationSquareMap.put(loc, square);
+        };
     }
 
     /**
      *
      */
-    public void makeMove() {
+    public void makeMove(Location to) {
+        if(selectedPiece.getColor() == currentColor) {
+            if(underAttack.contains(to)) {
+                set(selectedPiece.getLocation(), null);
+                set(to, selectedPiece);
+                nextColor();
+                reDrawBoard();
+            }
+        }
+    }
 
+    public void nextColor() {
+        currentColor = (currentColor == PieceColor.LIGHT) ? PieceColor.DARK : PieceColor.LIGHT;
+    }
+
+    public void processHover (Location location){
+        selectedPiece = get(location);
+        if(get(location) != null) {
+            underAttack = get(location).getPossibleMoves();
+        }
+        rePaintBoard(location);
+
+
+    }
+    /**
+     * Paints squares based on moves under attack from the selected piece
+     */
+    public void rePaintBoard(Location location) {
+        for (Location loc : locations()) {
+            Square square = locationSquareMap.get(loc);
+            if(underAttack.contains(loc)) {
+                if(get(loc) != null) {
+                    square.setBackGroundColor(SquareColor.underAttackColor);
+                } else {
+                    square.setBackGroundColor(SquareColor.possibleMoveColor);
+                }
+            } else {
+                square.setBackGroundColor(square.getOriginalColor());
+            }
+        }
+    }
+    /**
+     * Draws pieces to the board
+     */
+    public void reDrawBoard() {
+        locationSquareMap.values().forEach(square -> {square.setGraphic(null);});
+        for(Location loc : locations()) {
+            if(get(loc) != null) { drawToBoard(loc, get(loc).getImage()); }
+        }
+    }
+    public void drawToBoard(Location loc, Image img) {
+        ImageView view = new ImageView();
+        view.setImage(img);
+        locationSquareMap.get(loc).setGraphic(view);
+    }
+
+    public void setupBoard() {
+        for (int i = 0; i < 8; i++) {
+            Pawn pawn = new Pawn(this,new Location(1,i), PieceColor.DARK);
+            set(pawn.getLocation(), pawn);
+        }
+        for (int i = 0; i<8; i++) {
+            Pawn pawn = new Pawn(this, new Location(6, i), PieceColor.LIGHT);
+            set(pawn.getLocation(), pawn);
+        }
+        reDrawBoard();
     }
 
     /**
@@ -30,7 +109,7 @@ public class ChessBoard extends Grid<IPiece> {
             return false;
         }
         ChessBoard copy = copy();
-        copy.makeMove();
+//        copy.makeMove(to);
 
         return true;
     }
@@ -52,6 +131,7 @@ public class ChessBoard extends Grid<IPiece> {
         }
         return copy;
     }
+
 
 
 

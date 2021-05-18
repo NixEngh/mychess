@@ -14,9 +14,12 @@ public class Chess extends Application {
     public void start(Stage primaryStage) throws Exception {
         primaryStage.setTitle("Chess");
         BorderPane pane = new BorderPane();
-        GridPane board = new ChessBoard(8, 8);
+        ChessBoard board = new ChessBoard(8, 8);
+
+        board.setupBoard();
         board.setAlignment(Pos.CENTER);
         pane.setCenter(board);
+
 
         Scene scene = new Scene(pane);
         primaryStage.setMinHeight(scene.getHeight());
@@ -24,4 +27,5 @@ public class Chess extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+
 }
