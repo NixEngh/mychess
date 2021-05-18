@@ -11,7 +11,6 @@ import java.util.Set;
 
 public class Pawn extends Piece{
     private static final char SYMBOL = 'P';
-    private final String IMAGE_PATH;
 
     private boolean isEnPassantPossible = false;
     private final GridDirection colorDir;
@@ -60,25 +59,8 @@ public class Pawn extends Piece{
         return ret;
     }
 
-    public void move() {
 
-    }
 
-    /**
-     * Returns whether given piece is a capturable enemy piece
-     * @param piece
-     * @return
-     */
-    public boolean isEnemyPieceNotKing(IPiece piece) {
-        if(piece==null) return false;
-
-        if (!(piece instanceof King)) {
-            if ( piece.getColor() != getColor()) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     public boolean enPasssantPossible(Pawn piece) {
         return isEnPassantPossible;
@@ -94,8 +76,4 @@ public class Pawn extends Piece{
         return new Pawn(copyTo, getLocation(), getColor());
     }
 
-    @Override
-    public Image getImage() {
-        return new Image(IMAGE_PATH, Square.getSIZE(), Square.getSIZE(), true, false);
-    }
 }

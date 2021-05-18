@@ -1,13 +1,16 @@
 package game.piece;
 
 import game.ChessBoard;
+import game.Square;
 import grid.Location;
+import javafx.scene.image.Image;
 
 public abstract class Piece implements IPiece{
     private PieceColor color;
     private ChessBoard board;
     private final Location startLocation;
     private Location currentLocation;
+    public String IMAGE_PATH;
 
     public Piece(ChessBoard board, Location startLocation, PieceColor color) {
         this.board = board;
@@ -41,5 +44,26 @@ public abstract class Piece implements IPiece{
      * @return The copy
      */
     public abstract Piece copyForBoard(ChessBoard board);
+
+    @Override
+    public Image getImage() {
+        return new Image(IMAGE_PATH, Square.getSIZE(), Square.getSIZE(), true, true);
+    }
+
+    /**
+     * Returns whether given piece is a capturable enemy piece
+     * @param piece
+     * @return
+     */
+    public boolean isEnemyPieceNotKing(IPiece piece) {
+        if(piece==null) return false;
+
+        if (!(piece instanceof King)) {
+            if ( piece.getColor() != getColor()) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

@@ -3,6 +3,7 @@ package game;
 import grid.Location;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
 
 public class Square extends Label {
     private Location location;
@@ -34,12 +35,15 @@ public class Square extends Label {
     }
 
     private void onMouseEntered() {
-        board.processHover(location);
+        board.handleHover(location);
     }
+
+
     private void onMouseClicked() {
-        board.makeMove(location);
+        board.handleMouseClicked(location);
     }
     private void onMouseExited() {
+        board.clearBoardPaint();
     }
 
     public static int getSIZE() {

@@ -5,6 +5,7 @@ import grid.Grid;
 import grid.Location;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 
 import java.util.*;
 
@@ -12,7 +13,10 @@ public class ChessBoard extends Grid<Piece> {
 
     private PieceColor currentColor = PieceColor.LIGHT;
     private Map<Location, Square> locationSquareMap = new HashMap<>();
+
+
     private Set<Location> underAttack = new HashSet<>();
+    private Set<Location> possibleLocs = new HashSet<>();
     private Piece selectedPiece;
 
     public ChessBoard(int rows, int columns) {
@@ -20,7 +24,10 @@ public class ChessBoard extends Grid<Piece> {
 
         for (Location loc : locations()) {
             Square square = new Square(this, loc);
-            add(square, loc.col, loc.row);
+            StackPane stackPane = new StackPane(square);
+            add(stackPane, loc.col, loc.row);
+
+
             locationSquareMap.put(loc, square);
         };
     }
@@ -38,9 +45,16 @@ public class ChessBoard extends Grid<Piece> {
             set(selectedPiece.getLocation(), null);
             set(to, selectedPiece);
             selectedPiece.setLocation(to);
+
             nextColor();
+
             reDrawBoard();
+            clearBoardPaint();
+
             underAttack = Collections.emptySet();
+            possibleLocs = Collections.emptySet();
+
+            clearSelectedPiece();
         }
 
     }
@@ -49,16 +63,32 @@ public class ChessBoard extends Grid<Piece> {
         currentColor = (currentColor == PieceColor.LIGHT) ? PieceColor.DARK : PieceColor.LIGHT;
     }
 
-    public void processHover (Location location){
+    public void handleHover(Location location){
         if(get(location) != null) {
             if(get(location).getColor() == currentColor){
-                selectedPiece = get(location);
-                underAttack = get(location).getPossibleMoves();
+//                selectedPiece = get(location);
+                possibleLocs = get(location).getPossibleMoves();
             }
         }
         rePaintBoard(location);
-
-
+    }
+    public void handleMouseClicked(Location location) {
+        Piece piece = get(location);
+        if(hasSelectedPiece()) {
+            if(piece == null) {
+                makeMove(location);
+            } else {
+                if(piece.getColor() == currentColor) {
+                    selectPiece(piece);
+                }
+            }
+        } else {
+            if (piece != null) {
+                if(piece.getColor() == currentColor){
+                    selectPiece(piece);
+                }
+            }
+        }
     }
     /**
      * Paints squares based on moves under attack from the selected piece
@@ -66,7 +96,9 @@ public class ChessBoard extends Grid<Piece> {
     public void rePaintBoard(Location location) {
         for (Location loc : locations()) {
             Square square = locationSquareMap.get(loc);
-            if(underAttack.contains(loc)) {
+
+            Set<Location> setToPaint = (hasSelectedPiece()) ? underAttack : possibleLocs;
+            if(setToPaint.contains(loc)) {
                 if(get(loc) != null) {
                     square.setBackGroundColor(SquareColor.underAttackColor);
                 } else {
@@ -77,6 +109,13 @@ public class ChessBoard extends Grid<Piece> {
             }
         }
     }
+    public void clearBoardPaint() {
+        for(Location loc : locations()) {
+            Square square = locationSquareMap.get(loc);
+            square.setBackGroundColor(square.getOriginalColor());
+        }
+    }
+
     /**
      * Draws pieces to the board
      */
@@ -92,16 +131,18 @@ public class ChessBoard extends Grid<Piece> {
         locationSquareMap.get(loc).setGraphic(view);
     }
 
-    public void setupBoard() {
-        for (int i = 0; i < 8; i++) {
-            Pawn pawn = new Pawn(this,new Location(1,i), PieceColor.DARK);
-            set(pawn.getLocation(), pawn);
-        }
-        for (int i = 0; i<8; i++) {
-            Pawn pawn = new Pawn(this, new Location(6, i), PieceColor.LIGHT);
-            set(pawn.getLocation(), pawn);
-        }
-        reDrawBoard();
+    public boolean hasSelectedPiece() {
+        return selectedPiece != null;
+    }
+    public void clearSelectedPiece() {
+        selectedPiece = null;
+    }
+
+    public void selectPiece(Piece piece) {
+        selectedPiece = piece;
+        underAttack = possibleLocs;
+
+
     }
 
     /**
@@ -153,7 +194,29 @@ public class ChessBoard extends Grid<Piece> {
         return copy;
     }
 
+    public void setupBoard() {
+        for (int i = 0; i < 8; i++) {
+            Pawn pawn = new Pawn(this,new Location(1,i), PieceColor.DARK);
+            set(pawn.getLocation(), pawn);
+        }
+        for (int i = 0; i<8; i++) {
+            Pawn pawn = new Pawn(this, new Location(6, i), PieceColor.LIGHT);
+            set(pawn.getLocation(), pawn);
+        }
+        Location loc = new Location(0, 2);
+        set(loc, new Bishop(this, loc, PieceColor.DARK));
+
+        loc = new Location(0, 5);
+        set(loc, new Bishop(this,loc, PieceColor.DARK));
+
+        loc = new Location(7, 2);
+        set(loc, new Bishop(this,loc, PieceColor.LIGHT));
+
+        loc = new Location(7, 5);
+        set(loc, new Bishop(this,loc, PieceColor.LIGHT));
 
 
+        reDrawBoard();
+    }
 
 }

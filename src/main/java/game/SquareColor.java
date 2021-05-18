@@ -15,7 +15,7 @@ public enum SquareColor {
         return colorCode;
     }
 
-    public SquareColor getOriginalColor(Square square) {
+    public static SquareColor getOriginalColor(Square square) {
         return square.getOriginalColor();
     }
 }
