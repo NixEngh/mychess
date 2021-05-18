@@ -29,6 +29,8 @@ public abstract class Piece implements IPiece{
         return currentLocation;
     }
 
+    public void setLocation(Location loc) { currentLocation = loc; }
+
     @Override
     public PieceColor getColor() { return color; }
 

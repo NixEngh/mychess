@@ -1,9 +1,6 @@
 package game;
 
-import game.piece.IPiece;
-import game.piece.Pawn;
-import game.piece.Piece;
-import game.piece.PieceColor;
+import game.piece.*;
 import grid.Grid;
 import grid.Location;
 import javafx.scene.image.Image;
@@ -27,19 +24,25 @@ public class ChessBoard extends Grid<Piece> {
             locationSquareMap.put(loc, square);
         };
     }
+    public ChessBoard(int rows, int columns, Piece selectedPiece) {
+        this(rows, columns);
+        this.selectedPiece = selectedPiece;
+    }
 
     /**
      *
      */
     public void makeMove(Location to) {
-        if(selectedPiece.getColor() == currentColor) {
-            if(underAttack.contains(to)) {
-                set(selectedPiece.getLocation(), null);
-                set(to, selectedPiece);
-                nextColor();
-                reDrawBoard();
-            }
+
+        if(underAttack.contains(to)) {
+            set(selectedPiece.getLocation(), null);
+            set(to, selectedPiece);
+            selectedPiece.setLocation(to);
+            nextColor();
+            reDrawBoard();
+            underAttack = Collections.emptySet();
         }
+
     }
 
     public void nextColor() {
@@ -47,9 +50,11 @@ public class ChessBoard extends Grid<Piece> {
     }
 
     public void processHover (Location location){
-        selectedPiece = get(location);
         if(get(location) != null) {
-            underAttack = get(location).getPossibleMoves();
+            if(get(location).getColor() == currentColor){
+                selectedPiece = get(location);
+                underAttack = get(location).getPossibleMoves();
+            }
         }
         rePaintBoard(location);
 
@@ -108,8 +113,20 @@ public class ChessBoard extends Grid<Piece> {
         if(!isOnGrid(to)) {
             return false;
         }
+        Piece pieceAtLocation = get(to);
+
+        if(pieceAtLocation != null) {
+            if (pieceAtLocation.getColor() == currentColor || pieceAtLocation instanceof King) {
+                return false;
+            }
+        }
+
+        //See if current king is under check after move, as this is illegal
         ChessBoard copy = copy();
-//        copy.makeMove(to);
+        copy.makeMove(to);
+        if(copy.isCheck(currentColor)) {
+            return false;
+        }
 
         return true;
     }
@@ -117,10 +134,14 @@ public class ChessBoard extends Grid<Piece> {
      * Returns whether the king is in check.
      * @return
      */
-    public boolean isCheck(){
+    public boolean isCheck(PieceColor color){
         return false;
     }
 
+    /**
+     * Creates a copy chessboard where every piece is also a new instance
+     * @return
+     */
     @Override
     public ChessBoard copy() {
         ChessBoard copy = new ChessBoard(numRows(), numColumns());

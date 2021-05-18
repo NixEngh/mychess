@@ -26,16 +26,17 @@ public class Pawn extends Piece{
     @Override
     public Set<Location> getPossibleMoves() {
         Set<Location> ret = new HashSet<>();
+
         Location neighbor = getLocation().getNeighbor(colorDir);
 
         //If nothing straight ahead
-        if(getBoard().canMove(this, neighbor)){
+        if(getBoard().canMove(this, neighbor) && getBoard().get(neighbor) == null){
             ret.add(neighbor);
 
             //If this pawn's first move and nothing in the next two squares
             if(getLocation() == getStartLocation()) {
-                Location DoubleNeighbor = neighbor.getNeighbor(colorDir);
-                if(getBoard().canMove(this, DoubleNeighbor)) ret.add(DoubleNeighbor);
+                Location doubleNeighbor = neighbor.getNeighbor(colorDir);
+                if(getBoard().canMove(this, doubleNeighbor) && getBoard().get(doubleNeighbor) == null) ret.add(doubleNeighbor);
             }
         }
 

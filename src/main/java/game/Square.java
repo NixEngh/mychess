@@ -37,7 +37,7 @@ public class Square extends Label {
         board.processHover(location);
     }
     private void onMouseClicked() {
-
+        board.makeMove(location);
     }
     private void onMouseExited() {
     }
