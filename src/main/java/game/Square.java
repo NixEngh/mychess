@@ -43,7 +43,7 @@ public class Square extends Label {
         board.handleMouseClicked(location);
     }
     private void onMouseExited() {
-        board.clearBoardPaint();
+//        board.clearBoardPaint();
     }
 
     public static int getSIZE() {

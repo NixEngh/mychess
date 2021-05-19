@@ -61,7 +61,6 @@ public class Pawn extends Piece{
 
 
 
-
     public boolean enPasssantPossible(Pawn piece) {
         return isEnPassantPossible;
     }
@@ -73,7 +72,7 @@ public class Pawn extends Piece{
 
     @Override
     public Piece copyForBoard (ChessBoard copyTo) {
-        return new Pawn(copyTo, getLocation(), getColor());
+        return new Pawn(copyTo, getStartLocation(), getColor());
     }
 
 }

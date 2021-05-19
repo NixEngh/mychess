@@ -34,8 +34,10 @@ public class Location {
 	 * @return The adjacent location
 	 */
 	public Location getNeighbor(GridDirection dir) {
-		return dir.getNeighbor(this);
+		return getNeighbor(dir, 1);
 	}
+
+	public Location getNeighbor(GridDirection dir, int steps) { return dir.getNeighbor(this, steps); }
 
 	/**
 	 * Returns the Manhattan distance between 2 locations.

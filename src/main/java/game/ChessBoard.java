@@ -13,6 +13,7 @@ public class ChessBoard extends Grid<Piece> {
 
     private PieceColor currentColor = PieceColor.LIGHT;
     private Map<Location, Square> locationSquareMap = new HashMap<>();
+    private Map<Location, StackPane> locationStackPaneMap = new HashMap<>();
 
 
     private Set<Location> underAttack = new HashSet<>();
@@ -29,6 +30,7 @@ public class ChessBoard extends Grid<Piece> {
 
 
             locationSquareMap.put(loc, square);
+            locationStackPaneMap.put(loc, stackPane);
         };
     }
     public ChessBoard(int rows, int columns, Piece selectedPiece) {
@@ -43,6 +45,8 @@ public class ChessBoard extends Grid<Piece> {
 
         if(underAttack.contains(to)) {
             set(selectedPiece.getLocation(), null);
+            removeFrame(selectedPiece.getLocation());
+
             set(to, selectedPiece);
             selectedPiece.setLocation(to);
 
@@ -78,11 +82,14 @@ public class ChessBoard extends Grid<Piece> {
         Piece piece = get(location);
         if(hasSelectedPiece()) {
             if(piece == selectedPiece) {
+                removeFrame(location);
                 clearSelectedPiece();
             } else if(piece == null) {
                 makeMove(location);
             } else if(piece.getColor() == currentColor) {
                 selectPiece(piece);
+            } else if(piece.getColor() != currentColor) {
+                makeMove(location);
             }
 
         } else {
@@ -143,10 +150,25 @@ public class ChessBoard extends Grid<Piece> {
     }
 
     public void selectPiece(Piece piece) {
+        if(hasSelectedPiece()) {
+            removeFrame(selectedPiece.getLocation());
+        }
         selectedPiece = piece;
         underAttack = possibleLocs;
         rePaintBoard(piece.getLocation());
 
+        drawFrame(selectedPiece.getLocation());
+
+    }
+
+    public void drawFrame(Location loc) {
+        locationStackPaneMap.get(loc).getChildren().add(new ImageView(new Image("square-png-25133.png", Square.getSIZE(), Square.getSIZE(), true, false)));
+    }
+    public void removeFrame(Location loc) {
+        StackPane stackPane = locationStackPaneMap.get(loc);
+        Square square = locationSquareMap.get(loc);
+        stackPane.getChildren().clear();
+        stackPane.getChildren().add(square);
     }
 
     /**
@@ -218,6 +240,36 @@ public class ChessBoard extends Grid<Piece> {
 
         loc = new Location(7, 5);
         set(loc, new Bishop(this,loc, PieceColor.LIGHT));
+
+        loc = new Location(0, 1);
+        set(loc, new Knight(this, loc, PieceColor.DARK));
+
+        loc = new Location(0, 6);
+        set(loc, new Knight(this,loc, PieceColor.DARK));
+
+        loc = new Location(7, 1);
+        set(loc, new Knight(this,loc, PieceColor.LIGHT));
+
+        loc = new Location(7, 6);
+        set(loc, new Knight(this,loc, PieceColor.LIGHT));
+
+        loc = new Location(0, 0);
+        set(loc, new Rook(this, loc, PieceColor.DARK));
+
+        loc = new Location(0, 7);
+        set(loc, new Rook(this,loc, PieceColor.DARK));
+
+        loc = new Location(7, 0);
+        set(loc, new Rook(this,loc, PieceColor.LIGHT));
+
+        loc = new Location(7, 7);
+        set(loc, new Rook(this,loc, PieceColor.LIGHT));
+
+        loc = new Location(0, 3);
+        set(loc, new Queen(this, loc, PieceColor.DARK));
+
+        loc = new Location(7, 3);
+        set(loc, new Queen(this, loc, PieceColor.LIGHT));
 
 
         reDrawBoard();

@@ -2,8 +2,12 @@ package game.piece;
 
 import game.ChessBoard;
 import game.Square;
+import grid.GridDirection;
 import grid.Location;
 import javafx.scene.image.Image;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public abstract class Piece implements IPiece{
     private PieceColor color;
@@ -64,6 +68,24 @@ public abstract class Piece implements IPiece{
             }
         }
         return false;
+    }
+
+    public Set<Location> getStraightLine(Location start, GridDirection dir) {
+        Set<Location> ret = new HashSet<>();
+
+        Location test = start;
+        while(getBoard().isOnGrid(test.getNeighbor(dir))) {
+            test = test.getNeighbor(dir);
+            if(getBoard().get(test) == null) {
+                ret.add(test);
+            } else if (isEnemyPieceNotKing(getBoard().get(test))) {
+                ret.add(test);
+                break;
+            } else {
+                break;
+            }
+        }
+        return ret;
     }
 
 }

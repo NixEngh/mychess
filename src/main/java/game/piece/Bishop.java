@@ -29,24 +29,7 @@ public class Bishop extends Piece{
         }
         return ret;
     }
-    
-    private Set<Location> getStraightLine(Location start, GridDirection dir) {
-        Set<Location> ret = new HashSet<>();
 
-        Location test = start;
-        while(getBoard().isOnGrid(test.getNeighbor(dir))) {
-            test = test.getNeighbor(dir);
-            if(getBoard().get(test) == null) {
-                ret.add(test);
-            } else if (isEnemyPieceNotKing(getBoard().get(test))) {
-                ret.add(test);
-                break;
-            } else {
-                break;
-            }
-        }
-        return ret;
-    }
 
     @Override
     public char getSymbol() {

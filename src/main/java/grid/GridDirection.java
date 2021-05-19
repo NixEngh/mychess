@@ -52,8 +52,8 @@ public enum GridDirection {
 	 * @param loc
 	 * @return
 	 */
-	public Location getNeighbor(Location loc) {
-		return new Location(loc.row + dy, loc.col + dx);
+	public Location getNeighbor(Location loc, int steps) {
+		return new Location(loc.row + dy*steps, loc.col + dx*steps);
 	}
 
 	/**
