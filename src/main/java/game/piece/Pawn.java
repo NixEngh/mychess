@@ -6,6 +6,8 @@ import grid.GridDirection;
 import grid.Location;
 import javafx.scene.image.Image;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -19,6 +21,13 @@ public class Pawn extends Piece{
         super(board, startLocation, color);
         this.IMAGE_PATH = "pieces/" + color.getColorString() + "/pawn.png";
         this.colorDir = (color == PieceColor.LIGHT) ? GridDirection.NORTH : GridDirection.SOUTH;
+    }
+
+    //Is called only when the piece is set to move
+    @Override
+    public void makeMove(Location loc) {
+        //before the pawn is moved
+        setLocation(loc);
     }
 
 
@@ -56,12 +65,12 @@ public class Pawn extends Piece{
             }
         }
 
+
+
         return ret;
     }
 
-
-
-    public boolean enPasssantPossible(Pawn piece) {
+    public boolean enPassantPossible() {
         return isEnPassantPossible;
     }
 

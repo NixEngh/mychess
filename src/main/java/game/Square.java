@@ -11,8 +11,12 @@ public class Square extends Label {
     private static final int SIZE = 100;
     private SquareColor originalColor;
 
+    private Chess game;
 
-    Square(ChessBoard board, Location location) {
+
+    Square(Chess game, ChessBoard board, Location location) {
+        this.game = game;
+
         this.board = board;
         this.location = location;
         setAlignment(Pos.CENTER);
@@ -35,12 +39,12 @@ public class Square extends Label {
     }
 
     private void onMouseEntered() {
-        board.handleHover(location);
+        game.handleMouseEntered(location);
     }
 
 
     private void onMouseClicked() {
-        board.handleMouseClicked(location);
+        game.handleMouseClicked(location);
     }
     private void onMouseExited() {
 //        board.clearBoardPaint();

@@ -23,6 +23,15 @@ public abstract class Piece implements IPiece{
         this.color = color;
     }
 
+    /**
+     * Handles inner changes of a piece when it is moved
+     * Called only when the piece actually moves.
+     * @param to
+     */
+    public void makeMove(Location to) {
+        setLocation(to);
+    }
+
     public ChessBoard getBoard() {
         return board;
     }

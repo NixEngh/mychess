@@ -11,7 +11,7 @@ import java.util.function.Function;
 /**
  * A Grid contains a values in a 2D rectangular layout.
  */
-public class Grid<T> extends GridPane implements IGrid<T> {
+public class Grid<T> implements IGrid<T> {
 	private List<T> list;
 	private final List<T> cells;
 	private final int columns;
