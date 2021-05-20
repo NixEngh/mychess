@@ -1,16 +1,12 @@
 package game;
 
-import game.piece.Pawn;
 import game.piece.Piece;
-import game.piece.PieceColor;
 import grid.Location;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
 
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import java.util.*;
@@ -50,7 +46,7 @@ public class Chess extends Application {
         if(underAttack.contains(location)) {
 
             Location from = selectedPiece.getLocation();
-            board.makeMove(selectedPiece, location);
+            board.makeMove(selectedPiece.getLocation(), location);
             selectedPiece.makeMove(location);
 
             clearSelectedPiece(from);

@@ -16,7 +16,7 @@ public class Knight extends Piece{
     }
 
     @Override
-    public Set<Location> getPossibleMoves() {
+    public Set<Location> getPossibleMovesIgnoreCheck() {
         Set<Location> ret = new HashSet<>();
         for(GridDirection dir : GridDirection.FOUR_DIRECTIONS) {
             Location elbow = getLocation().getNeighbor(dir, 2);
@@ -24,12 +24,12 @@ public class Knight extends Piece{
             Location possible = elbow.getNeighbor(dir.turnRight());
             if(getBoard().isOnGrid(possible)) {
                 if(getBoard().get(possible)==null) ret.add(possible);
-                else if(isEnemyPieceNotKing(getBoard().get(possible))) ret.add(possible);
+                else if(isEnemyPiece(getBoard().get(possible))) ret.add(possible);
             }
             possible = elbow.getNeighbor(dir.turnLeft());
             if(getBoard().isOnGrid(possible)) {
                 if(getBoard().get(possible)==null) ret.add(possible);
-                else if(isEnemyPieceNotKing(getBoard().get(possible))) ret.add(possible);
+                else if(isEnemyPiece(getBoard().get(possible))) ret.add(possible);
             }
         }
         return ret;
@@ -42,6 +42,6 @@ public class Knight extends Piece{
 
     @Override
     public Piece copyForBoard(ChessBoard board) {
-        return new Knight(board, getStartLocation(), getColor());
+        return new Knight(board, getLocation(), getColor());
     }
 }

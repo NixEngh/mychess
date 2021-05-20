@@ -15,7 +15,7 @@ public interface IPiece {
      * Method to get all valid moves in a List, EmptyList if none.
      * @return
      */
-    public Set<Location> getPossibleMoves();
+    public Set<Location> getPossibleMovesIgnoreCheck();
 
     /**
      * Get symbol representation of the piece

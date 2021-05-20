@@ -15,12 +15,24 @@ public abstract class Piece implements IPiece{
     private final Location startLocation;
     private Location currentLocation;
     public String IMAGE_PATH;
+    public boolean hasMoved = false;
 
     public Piece(ChessBoard board, Location startLocation, PieceColor color) {
         this.board = board;
         this.startLocation = startLocation;
         this.currentLocation = startLocation;
         this.color = color;
+    }
+
+    public Set<Location> getPossibleMoves() {
+        Set<Location> ret = new HashSet<>();
+        for (Location location : getPossibleMovesIgnoreCheck()) {
+            if(board.canMoveCheck(this.getLocation(), location)) {
+                ret.add(location);
+            }
+        }
+        return ret;
+
     }
 
     /**
@@ -30,6 +42,11 @@ public abstract class Piece implements IPiece{
      */
     public void makeMove(Location to) {
         setLocation(to);
+        hasMoved = true;
+    }
+
+    public boolean isHasMoved() {
+        return hasMoved;
     }
 
     public ChessBoard getBoard() {
@@ -68,15 +85,10 @@ public abstract class Piece implements IPiece{
      * @param piece
      * @return
      */
-    public boolean isEnemyPieceNotKing(IPiece piece) {
+    public boolean isEnemyPiece(IPiece piece) {
         if(piece==null) return false;
 
-        if (!(piece instanceof King)) {
-            if ( piece.getColor() != getColor()) {
-                return true;
-            }
-        }
-        return false;
+        return piece.getColor() != getColor();
     }
 
     public Set<Location> getStraightLine(Location start, GridDirection dir) {
@@ -87,7 +99,7 @@ public abstract class Piece implements IPiece{
             test = test.getNeighbor(dir);
             if(getBoard().get(test) == null) {
                 ret.add(test);
-            } else if (isEnemyPieceNotKing(getBoard().get(test))) {
+            } else if (isEnemyPiece(getBoard().get(test))) {
                 ret.add(test);
                 break;
             } else {

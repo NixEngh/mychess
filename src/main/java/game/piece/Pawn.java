@@ -1,20 +1,16 @@
 package game.piece;
 
 import game.ChessBoard;
-import game.Square;
 import grid.GridDirection;
 import grid.Location;
-import javafx.scene.image.Image;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
 public class Pawn extends Piece{
     private static final char SYMBOL = 'P';
 
-    private boolean isEnPassantPossible = false;
+    private Location enPassantLocation;
     private final GridDirection colorDir;
 
     public Pawn(ChessBoard board, Location startLocation, PieceColor color){
@@ -27,24 +23,28 @@ public class Pawn extends Piece{
     @Override
     public void makeMove(Location loc) {
         //before the pawn is moved
+        if(loc.equals(getLocation().getNeighbor(colorDir, 2))){
+
+        }
         setLocation(loc);
+        setEnPassantLocation(null);
     }
 
 
     @Override
-    public Set<Location> getPossibleMoves() {
+    public Set<Location> getPossibleMovesIgnoreCheck() {
         Set<Location> ret = new HashSet<>();
 
         Location neighbor = getLocation().getNeighbor(colorDir);
 
         //If nothing straight ahead
-        if(getBoard().canMove(this, neighbor) && getBoard().get(neighbor) == null){
+        if( getBoard().isOnGrid(neighbor) && getBoard().get(neighbor) == null){
             ret.add(neighbor);
 
             //If this pawn's first move and nothing in the next two squares
             if(getLocation() == getStartLocation()) {
                 Location doubleNeighbor = neighbor.getNeighbor(colorDir);
-                if(getBoard().canMove(this, doubleNeighbor) && getBoard().get(doubleNeighbor) == null) ret.add(doubleNeighbor);
+                if(getBoard().isOnGrid(doubleNeighbor) && getBoard().get(doubleNeighbor) == null) ret.add(doubleNeighbor);
             }
         }
 
@@ -52,7 +52,7 @@ public class Pawn extends Piece{
         Location lookRight = getLocation().getNeighbor(colorDir.turnRight45());
 
         if(getBoard().isOnGrid(lookRight)) {
-            if (isEnemyPieceNotKing(getBoard().get(lookRight))) {
+            if (isEnemyPiece(getBoard().get(lookRight))) {
                 ret.add(lookRight);
             }
         }
@@ -60,7 +60,7 @@ public class Pawn extends Piece{
         // Check if pawn can capture to the left
         Location lookLeft = getLocation().getNeighbor(colorDir.turnLeft45());
         if(getBoard().isOnGrid(lookLeft)) {
-            if (isEnemyPieceNotKing(getBoard().get(lookLeft))) {
+            if (isEnemyPiece(getBoard().get(lookLeft))) {
                 ret.add(lookLeft);
             }
         }
@@ -70,8 +70,8 @@ public class Pawn extends Piece{
         return ret;
     }
 
-    public boolean enPassantPossible() {
-        return isEnPassantPossible;
+    public void setEnPassantLocation(Location enPassantLocation) {
+        this.enPassantLocation = enPassantLocation;
     }
 
     @Override
@@ -81,7 +81,7 @@ public class Pawn extends Piece{
 
     @Override
     public Piece copyForBoard (ChessBoard copyTo) {
-        return new Pawn(copyTo, getStartLocation(), getColor());
+        return new Pawn(copyTo, getLocation(), getColor());
     }
 
 }

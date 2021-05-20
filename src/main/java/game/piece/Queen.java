@@ -17,7 +17,7 @@ public class Queen extends Piece{
     }
 
     @Override
-    public Set<Location> getPossibleMoves() {
+    public Set<Location> getPossibleMovesIgnoreCheck() {
         Set<Location> ret = new HashSet<>();
         for(GridDirection dir : GridDirection.EIGHT_DIRECTIONS) {
             ret.addAll(getStraightLine(getLocation(), dir));
@@ -33,6 +33,6 @@ public class Queen extends Piece{
 
     @Override
     public Piece copyForBoard(ChessBoard board) {
-        return new Queen(board, getStartLocation(), getColor());
+        return new Queen(board, getLocation(), getColor());
     }
 }

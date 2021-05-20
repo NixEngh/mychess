@@ -21,7 +21,7 @@ public class Bishop extends Piece{
     }
 
     @Override
-    public Set<Location> getPossibleMoves() {
+    public Set<Location> getPossibleMovesIgnoreCheck() {
         Set<Location> ret = new HashSet<>();
 
         for(GridDirection dir : GridDirection.FOUR_DIRECTIONS){

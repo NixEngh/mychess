@@ -16,7 +16,7 @@ public class Rook extends Piece{
     }
 
     @Override
-    public Set<Location> getPossibleMoves() {
+    public Set<Location> getPossibleMovesIgnoreCheck() {
         Set<Location> ret = new HashSet<>();
         for(GridDirection dir : GridDirection.FOUR_DIRECTIONS) {
             ret.addAll((getStraightLine(getLocation(), dir)));
@@ -31,6 +31,6 @@ public class Rook extends Piece{
 
     @Override
     public Piece copyForBoard(ChessBoard board) {
-        return new Rook(board, getStartLocation(), getColor());
+        return new Rook(board, getLocation(), getColor());
     }
 }
