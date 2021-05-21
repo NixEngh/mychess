@@ -2,6 +2,7 @@ package game;
 
 import game.piece.*;
 import grid.Grid;
+import grid.GridDirection;
 import grid.Location;
 
 import java.util.HashMap;
@@ -14,8 +15,8 @@ public class ChessBoard extends Grid<Piece> {
     private HashMap<PieceColor, Piece> colorToKing = new HashMap<>();
 
 
-    public ChessBoard(int rows, int columns) {
-        super(rows, columns);
+    public ChessBoard() {
+        super(8, 8);
     }
 
 
@@ -31,10 +32,11 @@ public class ChessBoard extends Grid<Piece> {
 
 
     /**
-     * If a location is empty and king is not checked in moving.
-     * @param to
+     * Creates a copy of the chessboard and sees if the king of currentColor is put in check.
+     * @param from a location from which a piece is to be moved
+     * @param to the location to which the piece shall be moved
      *
-     * @return
+     * @return  whether a move is possible with respect to isKingInCheck
      */
     public boolean canMoveCheck(Location from, Location to){
         //See if current king is under check after move, as this is illegal
@@ -49,7 +51,7 @@ public class ChessBoard extends Grid<Piece> {
     }
 
     /**
-     *
+     * Iterates through every piece and sees if piece.getPossibleMovesIgnoreCheck contains the location of the king of the given color
      * @param color the color of king to check
      * @return if the king is in check
      */
@@ -59,7 +61,7 @@ public class ChessBoard extends Grid<Piece> {
                 continue;
             }
             else if (get(loc).getColor() != color) {
-                if(get(loc).getPossibleMovesIgnoreCheck().contains(colorToKing.get(color).getLocation())) {
+                if(!(get(loc) instanceof King) && get(loc).getPossibleMovesIgnoreCheck().contains(colorToKing.get(color).getLocation())) {
                     return true;
                 }
             }
@@ -69,11 +71,11 @@ public class ChessBoard extends Grid<Piece> {
 
     /**
      * Creates a copy chessboard where every piece is also a new instance
-     * @return
+     * @return the copy
      */
     @Override
     public ChessBoard copy() {
-        ChessBoard copy = new ChessBoard(numRows(), numColumns());
+        ChessBoard copy = new ChessBoard();
         for (Location loc : locations()) {
             if(get(loc) != null) {
                 copy.set(loc, get(loc).copyForBoard(copy));
@@ -107,6 +109,7 @@ public class ChessBoard extends Grid<Piece> {
             Pawn pawn = new Pawn(this, new Location(6, i), PieceColor.LIGHT);
             set(pawn.getLocation(), pawn);
         }
+        //BISHOP
         Location loc = new Location(0, 2);
         set(loc, new Bishop(this, loc, PieceColor.DARK));
 
@@ -118,6 +121,8 @@ public class ChessBoard extends Grid<Piece> {
 
         loc = new Location(7, 5);
         set(loc, new Bishop(this,loc, PieceColor.LIGHT));
+
+        //KNIGHT
 
         loc = new Location(0, 1);
         set(loc, new Knight(this, loc, PieceColor.DARK));
@@ -131,17 +136,8 @@ public class ChessBoard extends Grid<Piece> {
         loc = new Location(7, 6);
         set(loc, new Knight(this,loc, PieceColor.LIGHT));
 
-        loc = new Location(0, 0);
-        set(loc, new Rook(this, loc, PieceColor.DARK));
 
-        loc = new Location(0, 7);
-        set(loc, new Rook(this,loc, PieceColor.DARK));
-
-        loc = new Location(7, 0);
-        set(loc, new Rook(this,loc, PieceColor.LIGHT));
-
-        loc = new Location(7, 7);
-        set(loc, new Rook(this,loc, PieceColor.LIGHT));
+        //QUEEN
 
         loc = new Location(0, 3);
         set(loc, new Queen(this, loc, PieceColor.DARK));
@@ -149,13 +145,75 @@ public class ChessBoard extends Grid<Piece> {
         loc = new Location(7, 3);
         set(loc, new Queen(this, loc, PieceColor.LIGHT));
 
+
+        //KING
+
         loc = new Location(0, 4);
-        colorToKing.put(PieceColor.DARK, new King(this, loc, PieceColor.DARK));
+
+        King darkKing = new King(this, loc, PieceColor.DARK);
+        colorToKing.put(PieceColor.DARK, darkKing);
         set(loc, colorToKing.get(PieceColor.DARK));
 
         loc = new Location(7, 4);
-        colorToKing.put(PieceColor.LIGHT, new King(this, loc, PieceColor.LIGHT));
+        King lightKing = new King(this, loc, PieceColor.LIGHT);
+        colorToKing.put(PieceColor.LIGHT, lightKing);
         set(loc, colorToKing.get(PieceColor.LIGHT));
+
+
+        //ROOK
+
+
+        loc = new Location(0, 0);
+        Rook rook = new Rook(this, loc, PieceColor.DARK);
+        set(loc, rook);
+        darkKing.addToRooks(rook);
+
+        loc = new Location(0, 7);
+        rook = new Rook(this, loc, PieceColor.DARK);
+        set(loc, rook);
+        darkKing.addToRooks(rook);
+
+
+        loc = new Location(7, 0);
+        rook = new Rook(this, loc, PieceColor.LIGHT);
+        set(loc, rook);
+        lightKing.addToRooks(rook);
+
+        loc = new Location(7, 7);
+        rook = new Rook(this,loc, PieceColor.LIGHT);
+        set(loc,rook);
+        lightKing.addToRooks(rook);
+
+
+    }
+    public void restart() {
+        clear();
+        setupBoard();
+        currentColor = PieceColor.LIGHT;
+    }
+
+    /**
+     * Checks: if the given king and rook have moved (by using hasMoved, meaning rook and king must be at their startlocations),
+     * if there are any pieces between the rook and the king, and if the king is put in check or is blocked by check.
+     * @param king
+     * @param rook
+     * @return
+     */
+    public boolean canCastle(Piece king, Piece rook) {
+        if(king.hasMoved || rook.hasMoved) {
+            return false;
+        }
+        if(isKingInCheck(currentColor)) return false;
+
+        GridDirection directionToRook = king.getLocation().directionTo(rook.getLocation());
+        Location testLocation = king.getLocation().getNeighbor(directionToRook);
+        if(get(testLocation) != null || !canMoveCheck(king.getLocation(), king.getLocation().getNeighbor(directionToRook))) {
+            return false;
+        }
+        testLocation = testLocation.getNeighbor(directionToRook);
+        if(get(testLocation) != null || !canMoveCheck(king.getLocation(), testLocation)) return false;
+
+        return true;
 
     }
 

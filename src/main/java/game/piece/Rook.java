@@ -4,15 +4,21 @@ import game.ChessBoard;
 import grid.GridDirection;
 import grid.Location;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
 public class Rook extends Piece{
     private static final char SYMBOL = 'R';
+    private boolean hasMoved;
 
     public Rook(ChessBoard board, Location startLocation, PieceColor color) {
-        super(board, startLocation, color);
+        this(board, startLocation, color, false);
+    }
+    public Rook(ChessBoard board, Location location, PieceColor color, boolean hasMoved) {
+        super(board, location, color);
         this.IMAGE_PATH = "pieces/" + color.getColorString() + "/rook.png";
+        this.hasMoved = hasMoved;
     }
 
     @Override
@@ -31,6 +37,6 @@ public class Rook extends Piece{
 
     @Override
     public Piece copyForBoard(ChessBoard board) {
-        return new Rook(board, getLocation(), getColor());
+        return new Rook(board, getLocation(), getColor(), hasMoved);
     }
 }

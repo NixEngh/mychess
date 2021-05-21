@@ -1,10 +1,14 @@
 package game;
 
+import game.piece.King;
 import game.piece.Piece;
+import game.piece.Rook;
+import grid.GridDirection;
 import grid.Location;
 import javafx.application.Application;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.layout.BorderPane;
 
 import javafx.stage.Stage;
@@ -26,30 +30,51 @@ public class Chess extends Application {
         primaryStage.setTitle("Chess");
         BorderPane pane = new BorderPane();
 
-        board = new ChessBoard(8, 8);
+        board = new ChessBoard();
         board.setupBoard();
 
         guiGrid = new GUIGrid(this, board);
         guiGrid.setAlignment(Pos.CENTER);
 
         pane.setCenter(guiGrid);
+        pane.autosize();
         guiGrid.reDrawBoard();
+
+        Button restartButton = new Button("Restart");
+        restartButton.setStyle("-fx-font-size: 20");
+        restartButton.setOnAction(e -> {
+            board.restart();
+            guiGrid.reDrawBoard();
+        });
+
+        guiGrid.add(restartButton, 4, 9, 1, 1);
 
         Scene scene = new Scene(pane);
         primaryStage.setMinHeight(Square.getSIZE()*9);
         primaryStage.setMinWidth(Square.getSIZE()*8);
         primaryStage.setScene(scene);
         primaryStage.show();
+
     }
 
     public void makeMove(Location location) {
         if(underAttack.contains(location)) {
+            if(selectedPiece instanceof King) {
+                ((King) selectedPiece).getPossibleMovesIgnoreCheck();
+                if(((King) selectedPiece).getCastlingLocations().contains(location)) {
+                    Piece rook = ((King) selectedPiece).getCastlingRook(location);
+                    GridDirection dirToKing = rook.getLocation().directionTo(selectedPiece.getLocation());
+                    board.makeMove(rook.getLocation(), location.getNeighbor(dirToKing));
+                    board.nextColor();
+                    rook.makeMove(location.getNeighbor(dirToKing));
+                }
+            }
 
             Location from = selectedPiece.getLocation();
             board.makeMove(selectedPiece.getLocation(), location);
             selectedPiece.makeMove(location);
 
-            clearSelectedPiece(from);
+            clearPreviousSelectedPiece(from);
 
             guiGrid.reDrawBoard();
             rePaintBoard();
@@ -71,7 +96,7 @@ public class Chess extends Application {
         Piece piece = board.get(location);
         if(hasSelectedPiece()) {
             if(piece == selectedPiece) {
-                clearSelectedPiece(location);
+                clearPreviousSelectedPiece(location);
             }
             else if(piece == null) {
                 makeMove(location);
@@ -108,7 +133,7 @@ public class Chess extends Application {
     }
 
 
-    public void clearSelectedPiece(Location frameLocation) {
+    public void clearPreviousSelectedPiece(Location frameLocation) {
 
         guiGrid.removeFrame(frameLocation);
         selectedPiece = null;

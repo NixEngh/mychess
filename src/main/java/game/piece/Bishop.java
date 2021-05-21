@@ -39,6 +39,6 @@ public class Bishop extends Piece{
 
     @Override
     public Piece copyForBoard(ChessBoard board) {
-        return new Pawn(board, getLocation(), getColor());
+        return new Bishop(board, getLocation(), getColor());
     }
 }

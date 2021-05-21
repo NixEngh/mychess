@@ -23,7 +23,7 @@ public class GUIGrid extends GridPane {
         for (Location loc : board.locations()) {
             Square square = new Square(game, board, loc);
             StackPane stackPane = new StackPane(square);
-            add(stackPane, loc.col, loc.row);
+            add(stackPane, loc.col, loc.row+1);
 
 
             locationSquareMap.put(loc, square);
@@ -79,7 +79,7 @@ public class GUIGrid extends GridPane {
      * @param loc the location to be drawn on
      */
     public void drawFrame(Location loc) {
-        locationStackPaneMap.get(loc).getChildren().add(new ImageView(new Image("square-png-25133.png", Square.getSIZE(), Square.getSIZE(), true, false)));
+        locationStackPaneMap.get(loc).getChildren().add(new ImageView(new Image("square.png", Square.getSIZE(), Square.getSIZE(), true, false)));
     }
 
     /**

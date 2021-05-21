@@ -3,18 +3,28 @@ package game.piece;
 import game.ChessBoard;
 import grid.Location;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class King extends Piece{
     private static final char SYMBOL = 'K';
+    private boolean hasMoved;
+    private HashMap<Location, Piece> castlingLocationToRook = new HashMap<>();
+    private List<Rook> rooks = new ArrayList<>();
+
 
     public King(ChessBoard board, Location startLocation, PieceColor color) {
-        super(board, startLocation, color);
-        IMAGE_PATH = "pieces/" + color.getColorString() + "/king.png";
+        this(board, startLocation, color, false);
     }
+    public King(ChessBoard board, Location startLocation, PieceColor color, boolean hasMoved) {
+        super(board, startLocation, color);
+        this.IMAGE_PATH = "pieces/" + color.getColorString() + "/king.png";
+        this.hasMoved = hasMoved;
+    }
+
     @Override
     public Set<Location> getPossibleMovesIgnoreCheck() {
+        castlingLocationToRook.clear();
+
         Set<Location> ret = new HashSet<>();
         for(Location loc : getLocation().allNeighbors()) {
             if(getBoard().isOnGrid(loc)) {
@@ -26,7 +36,27 @@ public class King extends Piece{
                 }
             }
         }
+        if(!hasMoved) {
+            for(Piece rook : rooks) {
+                if(getBoard().canCastle(this, rook)){
+
+                    Location castlingLocation = getLocation().getNeighbor(getLocation().directionTo(rook.getLocation()), 2);
+                    castlingLocationToRook.put(castlingLocation, rook);
+                    ret.add(castlingLocation);
+                }
+            }
+        }
         return ret;
+
+    }
+    public void addToRooks(Rook rook) {
+        rooks.add(rook);
+    }
+    public Piece getCastlingRook(Location location) {
+        return castlingLocationToRook.get(location);
+    }
+    public Set<Location> getCastlingLocations() {
+        return castlingLocationToRook.keySet();
 
     }
 
@@ -37,6 +67,6 @@ public class King extends Piece{
 
     @Override
     public Piece copyForBoard(ChessBoard board) {
-        return new King(board, getLocation(), getColor());
+        return new King(board, getLocation(), getColor(), hasMoved);
     }
 }

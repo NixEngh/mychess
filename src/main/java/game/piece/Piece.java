@@ -15,12 +15,15 @@ public abstract class Piece implements IPiece{
     private final Location startLocation;
     private Location currentLocation;
     public String IMAGE_PATH;
-    public boolean hasMoved = false;
+    public boolean hasMoved;
 
-    public Piece(ChessBoard board, Location startLocation, PieceColor color) {
+    public Piece(ChessBoard board, Location location, PieceColor color) {
+        this(board, location, color, location);
+    }
+    public Piece(ChessBoard board, Location location, PieceColor color, Location startLocation) {
         this.board = board;
         this.startLocation = startLocation;
-        this.currentLocation = startLocation;
+        this.currentLocation = location;
         this.color = color;
     }
 

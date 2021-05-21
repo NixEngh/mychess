@@ -13,8 +13,11 @@ public class Pawn extends Piece{
     private Location enPassantLocation;
     private final GridDirection colorDir;
 
-    public Pawn(ChessBoard board, Location startLocation, PieceColor color){
-        super(board, startLocation, color);
+    public Pawn(ChessBoard board, Location location, PieceColor color){
+        this(board, location, color, location);
+    }
+    public Pawn(ChessBoard board, Location location, PieceColor color, Location startLocation){
+        super(board, location, color, startLocation);
         this.IMAGE_PATH = "pieces/" + color.getColorString() + "/pawn.png";
         this.colorDir = (color == PieceColor.LIGHT) ? GridDirection.NORTH : GridDirection.SOUTH;
     }
@@ -81,7 +84,7 @@ public class Pawn extends Piece{
 
     @Override
     public Piece copyForBoard (ChessBoard copyTo) {
-        return new Pawn(copyTo, getLocation(), getColor());
+        return new Pawn(copyTo, getLocation(), getColor(), getStartLocation());
     }
 
 }
