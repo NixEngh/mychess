@@ -10,8 +10,8 @@ import java.util.Set;
 public class Pawn extends Piece{
     private static final char SYMBOL = 'P';
 
-    private Location enPassantLocation;
     private final GridDirection colorDir;
+
 
     public Pawn(ChessBoard board, Location location, PieceColor color){
         this(board, location, color, location);
@@ -27,10 +27,12 @@ public class Pawn extends Piece{
     public void makeMove(Location loc) {
         //before the pawn is moved
         if(loc.equals(getLocation().getNeighbor(colorDir, 2))){
-
+            getBoard().setJustMovedTwoPawn(this);
         }
         setLocation(loc);
-        setEnPassantLocation(null);
+    }
+    public Location getBehindLocation() {
+        return getLocation().getNeighbor(colorDir.turn180());
     }
 
 
@@ -67,15 +69,30 @@ public class Pawn extends Piece{
                 ret.add(lookLeft);
             }
         }
+        lookRight = getLocation().getNeighbor(colorDir.turnRight());
+        lookLeft = getLocation().getNeighbor(colorDir.turnLeft());
 
+        testForEnPassant(ret, lookRight);
+        testForEnPassant(ret, lookLeft);
 
 
         return ret;
     }
 
-    public void setEnPassantLocation(Location enPassantLocation) {
-        this.enPassantLocation = enPassantLocation;
+    private void testForEnPassant(Set<Location> ret, Location lookLeft) {
+        if(getBoard().isOnGrid(lookLeft)) {
+            if (isEnemyPiece(getBoard().get(lookLeft))) {
+
+                Piece piece = getBoard().get(lookLeft);
+                if (piece instanceof Pawn) {
+                    if(piece.equals(getBoard().getJustMovedTwoPawn())){
+                        ret.add(((Pawn) piece).getBehindLocation());
+                    }
+                }
+            }
+        }
     }
+
 
     @Override
     public char getSymbol() {

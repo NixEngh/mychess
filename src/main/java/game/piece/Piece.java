@@ -40,7 +40,7 @@ public abstract class Piece implements IPiece{
 
     /**
      * Handles inner changes of a piece when it is moved
-     * Called only when the piece actually moves.
+     * Called only when the piece actually moves. Must be made AFTER board.makemove
      * @param to
      */
     public void makeMove(Location to) {

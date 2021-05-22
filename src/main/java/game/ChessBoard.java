@@ -11,8 +11,9 @@ import java.util.Set;
 
 public class ChessBoard extends Grid<Piece> {
     private PieceColor currentColor = PieceColor.LIGHT;
-    private Set<Location> enPassantThreat = new HashSet<>();
+
     private HashMap<PieceColor, Piece> colorToKing = new HashMap<>();
+    private Pawn justMovedTwoPawn;
 
 
     public ChessBoard() {
@@ -24,9 +25,21 @@ public class ChessBoard extends Grid<Piece> {
      * Updates piece location
      */
     public void makeMove(Location from, Location to) {
+        if(get(from) instanceof Pawn) {
+            if(justMovedTwoPawn != null) {
+                if (to.equals(justMovedTwoPawn.getBehindLocation())) {
+                    set(justMovedTwoPawn.getLocation(), null);
+                }
+            }
+        }
+        justMovedTwoPawn = null;
+
         set(to, get(from));
         set(from, null);
         nextColor();
+    }
+    public void setJustMovedTwoPawn (Pawn pawn){
+        justMovedTwoPawn = pawn;
     }
 
 
@@ -217,14 +230,7 @@ public class ChessBoard extends Grid<Piece> {
 
     }
 
-    public void watchForEnPassant(Location loc) {
-        enPassantThreat.add(loc);
-    }
-
-    public Set<Location> getEnPassantThreat() {
-        return enPassantThreat;
-    }
-    public void clearEnPassantThreat() {
-        enPassantThreat.clear();
+    public Pawn getJustMovedTwoPawn() {
+        return justMovedTwoPawn;
     }
 }

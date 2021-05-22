@@ -100,5 +100,8 @@ public enum GridDirection {
 		return this.turnLeft().turnRight45();
 	}
 
+    public GridDirection turn180() {
+		return this.turnRight().turnRight();
+    }
 }
 

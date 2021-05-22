@@ -1,6 +1,7 @@
 package game;
 
 import game.piece.King;
+import game.piece.Pawn;
 import game.piece.Piece;
 import game.piece.Rook;
 import grid.GridDirection;
