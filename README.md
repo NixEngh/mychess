@@ -1,6 +1,16 @@
 # mychess
-Simple chess program. Currently no maven build configured, so run the main class from IDE.
-Can't select new piece when pawn reaches the end.
+Simple chess program.
+
+## How to play
+### Dependencies:
+- Java
+- Maven
+
+### How to run
+#### From IDE:
+- Run src/main/java/game/Main
+#### With maven
+- run ```mvn clean compile javafx:run``` in the root folder
 
 ### Features
 ##### Hover to highlight possible moves
